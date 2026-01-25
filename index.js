@@ -4,15 +4,17 @@ const clearBtn = document.getElementById('clear-btn')
 const listContainer = document.getElementById('list-container')
 
 toDoArr = []
-idCount = 1
-const arrFromLocalStorage = JSON.parse(localStorage.getItem('toDoArr'))
-console.log(arrFromLocalStorage)
-if (arrFromLocalStorage) {
-    toDoArr = arrFromLocalStorage
-    for (let i = 0; i < toDoArr.length; i++) {
-        addToDo(toDoArr[i])
+function loadLocalStorage() {
+    const arrFromLocalStorage = JSON.parse(localStorage.getItem('toDoArr'))
+    console.log(arrFromLocalStorage)
+    if (arrFromLocalStorage) {
+        toDoArr = arrFromLocalStorage
+        for (let i = 0; i < toDoArr.length; i++) {
+            addToDo(toDoArr[i])
+        }
     }
 }
+idCount = toDoArr.length
 
 addBtn.addEventListener('click', function() {
     toDoArr.push(toDoInput.value)
@@ -33,6 +35,17 @@ toDoInput.addEventListener('keydown', function(event) {
 })
 
 clearBtn.addEventListener('click', function() {
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked')
+    console.log(checked)
+    checked.forEach(checkbox => {
+        const checkedId = checkbox.id
+        const checkedItem = document.querySelector(`label[for="${checkedId}"]`)
+        console.log(`text to remove is ${checkedItem.textContent}`)
+        toDoArr.splice(toDoArr.indexOf(checkedItem.textContent), 1)
+        console.log(toDoArr)
+        checkbox.closest('div').remove()
+    })
+    localStorage.setItem('toDoArr', JSON.stringify(toDoArr))
     // clear checked boxes
 })
 
@@ -56,3 +69,5 @@ function addToDo(text) {
     toDoItemContainer.appendChild(toDoItemLabel)
     listContainer.appendChild(toDoItemContainer)
 }
+
+loadLocalStorage()
